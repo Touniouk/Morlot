@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.fseventsd
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# VS Code
+.vscode/
+
+# Uncompressed source images (use assets/compressed/ for deployment)
+assets/*.jpg
+assets/*.jpeg
+assets/*.png
+assets/*.JPG
+assets/*.JPEG
+assets/*.PNG
+
+# Keep the compressed folder
+!assets/compressed/
