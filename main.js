@@ -17,6 +17,44 @@ const log = {
 };
 
 
+// ─── Loader ──────────────────────────────────────────────────
+(function initLoader() {
+  const loader = document.getElementById('loader');
+  const heroBg = document.querySelector('.hero-bg');
+
+  if (!loader || !heroBg) {
+    log.warn('initLoader — loader or hero-bg not found, skipping.');
+    return;
+  }
+
+  log.group('Loader');
+
+  // Pull the image URL out of the inline style
+  const match = heroBg.style.backgroundImage.match(/url\(['"]?(.+?)['"]?\)/);
+  if (!match) {
+    log.warn('No background-image URL found on hero-bg — hiding loader immediately.');
+    loader.classList.add('done');
+    log.groupEnd();
+    return;
+  }
+
+  const img = new Image();
+  img.onload = () => {
+    log.info('Hero image loaded — hiding loader.');
+    loader.classList.add('done');
+    log.groupEnd();
+  };
+  img.onerror = () => {
+    log.warn('Hero image failed to load — hiding loader anyway.');
+    loader.classList.add('done');
+    log.groupEnd();
+  };
+
+  log.info('Waiting for hero image:', match[1]);
+  img.src = match[1];
+})();
+
+
 // ─── Nav ─────────────────────────────────────────────────────
 (function initNav() {
   const nav        = document.getElementById('mainNav');
