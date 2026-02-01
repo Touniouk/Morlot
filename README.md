@@ -29,6 +29,12 @@ Serve the site with a local HTTP server (opening `index.html` directly won't wor
 npx serve .
 ```
 
+The images are compressed before being committed to git using the compress-images.sh script. This is not necesary to run before deploying but if you want to use it
+```bash
+chmod +x compress-images.sh
+./compress-images.sh
+```
+
 ## Deploying
 
 The site is fully static. For production, you only need to deploy `index.html`, `styles.css`, `main.js`, and the `assets/` folder.

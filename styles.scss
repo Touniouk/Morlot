@@ -93,6 +93,37 @@ img {
 section { padding: 7rem 2.5rem; }
 
 
+// ─── Loader ──────────────────────────────────────────────────
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: $charcoal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+
+  &.done {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.loader-spinner {
+  width: 36px;
+  height: 36px;
+  border: 2.5px solid rgba(255, 255, 255, 0.15);
+  border-top-color: $rust;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
 // ─── Reveal animation ────────────────────────────────────────
 .reveal {
   opacity: 0;
@@ -210,8 +241,8 @@ nav {
     inset: 0;
     will-change: transform;
     background:
-      linear-gradient(to top, rgba(42,42,39,0.85) 0%, rgba(42,42,39,0.2) 50%, transparent 100%),
-      url('assets/landscape.jpg') center / cover no-repeat;
+      linear-gradient(to top, rgba(42,42,39,0.85) 0%, rgba(42,42,39,0.2) 50%, transparent 100%);
+      // url('assets/landscape.jpg') — image set via inline style in HTML
 
     &::before {
       content: '';
@@ -319,7 +350,8 @@ nav {
       width: 100%;
       aspect-ratio: 3 / 4;
       border-radius: 4px;
-      background: url('assets/portrait.jpg') center / cover no-repeat;
+      // background image removed — this is now an <img> tag in HTML
+      background: none;
       position: relative;
       overflow: hidden;
       will-change: transform;
@@ -514,8 +546,8 @@ nav {
     inset: -30% 0;
     will-change: transform;
     background:
-      linear-gradient(to bottom, rgba(42,42,39,0.55) 0%, rgba(42,42,39,0.7) 100%),
-      url('assets/landscape.jpg') center / cover no-repeat;
+      linear-gradient(to bottom, rgba(42,42,39,0.55) 0%, rgba(42,42,39,0.7) 100%);
+      // url('assets/landscape.jpg') — image set via inline style in HTML
   }
 
   .pb-content {
