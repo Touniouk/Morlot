@@ -29,29 +29,103 @@ const log = {
 
   log.group('Loader');
 
-  // Pull the image URL out of the inline style
-  const match = heroBg.style.backgroundImage.match(/url\(['"]?(.+?)['"]?\)/);
-  if (!match) {
-    log.warn('No background-image URL found on hero-bg — hiding loader immediately.');
+  // Check if there's a full-quality image to upgrade to
+  const fullSrc = heroBg.dataset.srcFull;
+  
+  if (!fullSrc) {
+    log.warn('No data-src-full on hero-bg — hiding loader immediately.');
     loader.classList.add('done');
     log.groupEnd();
     return;
   }
 
-  const img = new Image();
-  img.onload = () => {
-    log.info('Hero image loaded — hiding loader.');
+  // Pull the preview image URL out of the inline style
+  const previewMatch = heroBg.style.backgroundImage.match(/url\(['"]?(.+?)['"]?\)/);
+  
+  if (!previewMatch) {
+    log.warn('No preview background-image URL found on hero-bg — hiding loader immediately.');
     loader.classList.add('done');
     log.groupEnd();
+    return;
+  }
+
+  log.info('Preview image:', previewMatch[1]);
+  log.info('Full-quality image:', fullSrc);
+
+  // Wait for the preview to load, then dismiss the loader
+  const preview = new Image();
+  preview.onload = () => {
+    log.info('Preview loaded — dismissing loader.');
+    loader.classList.add('done');
+    
+    // Now upgrade to full quality in the background
+    const full = new Image();
+    full.onload = () => {
+      log.info('Full-quality image loaded — upgrading hero.');
+      heroBg.style.backgroundImage = `url('${fullSrc}')`;
+      delete heroBg.dataset.srcFull; // Clean up
+    };
+    full.onerror = () => {
+      log.warn('Full-quality image failed to load — staying with preview.');
+    };
+    full.src = fullSrc;
   };
-  img.onerror = () => {
-    log.warn('Hero image failed to load — hiding loader anyway.');
+  
+  preview.onerror = () => {
+    log.warn('Preview image failed to load — hiding loader anyway.');
     loader.classList.add('done');
-    log.groupEnd();
   };
 
-  log.info('Waiting for hero image:', match[1]);
-  img.src = match[1];
+  preview.src = previewMatch[1];
+  log.groupEnd();
+})();
+
+
+// ─── Lazy Loading ────────────────────────────────────────────
+(function initLazyLoad() {
+  const lazyImages = document.querySelectorAll('[data-src]');
+
+  log.group('Lazy Loading');
+  log.info(`Found ${lazyImages.length} lazy-loadable element(s).`);
+
+  if (lazyImages.length === 0) {
+    log.warn('No [data-src] elements — observer not created.');
+    log.groupEnd();
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.target.dataset.src) {
+        const el = entry.target;
+        const src = el.dataset.src;
+        
+        log.info('Loading:', src);
+        
+        // Preload the image
+        const img = new Image();
+        img.onload = () => {
+          el.style.backgroundImage = `url('${src}')`;
+          el.classList.add('loaded');
+          delete el.dataset.src; // Clean up
+          log.info('Loaded:', src);
+        };
+        img.onerror = () => {
+          log.error('Failed to load:', src);
+          el.classList.add('error');
+        };
+        img.src = src;
+        
+        observer.unobserve(el); // Stop watching once triggered
+      }
+    });
+  }, {
+    rootMargin: '200px' // Start loading 200px before element enters viewport
+  });
+
+  lazyImages.forEach(el => observer.observe(el));
+  log.info('IntersectionObserver attached. Root margin: 200px');
+  log.groupEnd();
 })();
 
 

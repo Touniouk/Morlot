@@ -44,6 +44,14 @@ for img in "$ASSETS"/*.{jpg,jpeg,JPG,JPEG,png,PNG}; do
   if [ "$width" -ge "$height" ]; then
     # Landscape or square — resize to max width
     magick "$img" -resize "${MAX_LANDSCAPE_WIDTH}x>" -quality $QUALITY "$out"
+    
+    # For large landscape images (likely heroes), also create a preview version
+    if [ "$width" -ge 3000 ]; then
+      preview="$OUTPUT/$(basename "${img%.*}")-preview.webp"
+      magick "$img" -resize "400x>" -quality 60 -gaussian-blur 0.05 "$preview"
+      preview_kb=$(($(stat -f%z "$preview" 2>/dev/null || stat -c%s "$preview") / 1024))
+      echo "        + preview: ${preview_kb}KB"
+    fi
   else
     # Portrait — resize to max height
     magick "$img" -resize "x${MAX_PORTRAIT_HEIGHT}>" -quality $QUALITY "$out"

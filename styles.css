@@ -1,3 +1,4 @@
+@charset "UTF-8";
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -64,6 +65,34 @@ section {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+[data-src] {
+  background: linear-gradient(135deg, #6b6560 0%, rgb(85.4945812808, 80.7004926108, 76.7054187192) 100%);
+  transition: opacity 0.3s ease;
+}
+[data-src].loaded {
+  animation: fadeIn 0.4s ease;
+}
+[data-src].error {
+  background: linear-gradient(135deg, #6b6560 0%, rgb(74.7418719212, 70.5507389163, 67.0581280788) 100%);
+}
+[data-src].error::after {
+  content: "⚠";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
   }
 }
 .reveal {
@@ -491,6 +520,8 @@ nav.scrolled {
   inset: -30% 0;
   will-change: transform;
   background: linear-gradient(to bottom, rgba(42, 42, 39, 0.55) 0%, rgba(42, 42, 39, 0.7) 100%);
+  background-size: cover;
+  background-position: center;
 }
 .parallax-banner .pb-content {
   position: relative;
